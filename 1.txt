@@ -1,0 +1,95 @@
+liber ← 0
+Key[100]
+Parent[100]
+
+function insert(key, parent)
+    if liber = 0 then
+        Parent[0] ← 0
+        Key[0] ← key
+        liber ← liber + 1
+    else
+        Parent[liber] ← parent
+        Key[liber] ← key
+        liber ← liber + 1
+
+function search(key)
+    for i ← 0 to liber - 1 do
+        if Key[i] = key then
+            return i
+    return -1
+
+function deleteNode(cheie)
+    idx ← search(cheie)
+    if idx = -1 then
+        return
+    if idx = 0 then
+        Parent[idx] ← -1
+        Key[idx] ← -1
+    Key[idx] ← -1
+    for i ← 0 to liber - 1 do
+        if Parent[i] = cheie then
+            Parent[i] ← -1
+            for j ← 0 to liber - 1 do
+                if Parent[j] = Key[i] then
+                    deleteNode(Parent[j])
+            Key[i] ← -1
+            deleteNode(i)
+
+function update(vechi, nou)
+    n ← search(vechi)
+    Key[n] ← nou
+    return n
+
+function afisare()
+    print("\n##############")
+    print("\nIndex: ")
+    for i ← 0 to liber - 1 do
+        print(i, " ")
+    if liber > 0 then
+        print("\nParents: ")
+        for i ← 0 to liber - 1 do
+            print(Parent[i], " ")
+        print("\nKeys: ")
+        for i ← 0 to liber - 1 do
+            print(Key[i], " ")
+    else
+        print("\n[Empty]")
+    print("\n##############")
+
+function main()
+    opt, key, parent, oldKey, newKey
+
+    insert(2, 0)
+    insert(3, 2)
+    insert(4, 2)
+    insert(5, 3)
+    insert(6, 4)
+
+    while true do
+        print("1.Afisare")
+        print("2.Inserare")
+        print("3.Stergere")
+        print("4.Update")
+        print("5.Iesire")
+        print("Alegeti o optiune")
+        scanf("%d", opt)
+
+        switch opt do
+            case 1:
+                afisare()
+            case 2:
+                print("Introduceti cheia si parintele (cheie parinte): ")
+                scanf("%d %d", key, parent)
+                insert(key, parent)
+            case 3:
+                print("Introduceti cheia pentru stergere: ")
+                scanf("%d", key)
+                deleteNode(key)
+            case 4:
+                print("Introduceti vechea si noua cheie (veche noua): ")
+                scanf("%d %d", oldKey, newKey)
+                update(oldKey, newKey)
+            case 5:
+                return 0
+            default:
+                print("Optiune invalida. Incercati din nou.")
