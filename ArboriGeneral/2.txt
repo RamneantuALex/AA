@@ -1,0 +1,122 @@
+declară un vector primfiu[15] inițializat cu 0
+declară un vector frate_dr[15] inițializat cu 0
+declară un vector chei[15] inițializat cu 0
+declară o variabilă nods inițializată cu 0
+
+funcție insertie(cheie, parinte):
+    dacă nods este 15:
+        afișează "Memorie ocupată"
+        return
+    chei[nods] = cheie
+    dacă parinte ≠ 0:
+        dacă primfiu[parinte - 1] este 0:
+            primfiu[parinte - 1] = nods + 1
+        altfel:
+            aux = primfiu[parinte - 1]
+            cât timp frate_dr[aux - 1] ≠ 0:
+                aux = frate_dr[aux - 1]
+            frate_dr[aux - 1] = nods + 1
+    nods += 1
+
+funcție cautare(nod):
+    pentru fiecare i de la 0 la nods - 1:
+        dacă nod este chei[i]:
+            return i
+    return -1
+
+funcție update(cheie, cheie_noua):
+    pentru fiecare i de la 0 la nods - 1:
+        dacă chei[i] este cheie:
+            chei[i] = cheie_noua
+            return 1
+    return 0
+
+funcție parinte(nod):
+    pentru fiecare i de la 0 la nods - 1:
+        dacă primfiu[i] este nod sau frate_dr[i] este nod:
+            return i
+    return -1
+
+funcție primul_fiu(nod):
+    return primfiu[nod]
+
+funcție frate_dreapta(nod):
+    return frate_dr[nod]
+
+funcție afisare():
+    afișează "Index:      "
+    pentru fiecare i de la 0 la nods - 1:
+        afișează i
+    afișează "\n"
+
+    afișează "Chei:       "
+    pentru fiecare i de la 0 la nods - 1:
+        afișează chei[i]
+    afișează "\n"
+
+    afișează "PrimFiu:    "
+    pentru fiecare i de la 0 la nods - 1:
+        afișează primfiu[i]
+    afișează "\n"
+
+    afișează "FrateDr:    "
+    pentru fiecare i de la 0 la nods - 1:
+        afișează frate_dr[i]
+    afișează "\n"
+
+funcție suprimare(nod):
+    dacă nod < 0 sau nod ≥ nods sau chei[nod] este -1:
+        afișează "Nodul nu există sau este deja eliminat"
+        return
+    primFiu = primfiu[nod]
+    cât timp primFiu ≠ 0:
+        suprimare(primFiu - 1)
+        frateDr = frate_dr[primFiu - 1]
+        frate_dr[primFiu - 1] = -1
+        primfiu[nod] = frateDr
+        primFiu = frateDr
+
+    chei[nod] = -1
+    primfiu[nod] = -1
+
+funcție principală():
+    // Initializare arbore
+    pentru fiecare i de la 1 la 12:
+        insertie(i, (i-1) / 2)
+
+    cât timp adevărat:
+        afisare()
+        afișează "\n0.Ieșire\n1.Căutare nod\n2.Schimbare cheie\n3.Suprimare\n4.Afișare parinte\n5.Afișare prim fiu\n6.Afișare frate dreapta\n7.Afișare arbore\nOptiune: "
+        citește optiune
+        întrerupe dacă optiune este 0
+        alege(optiune):
+            caz 1:
+                citește cheie
+                afișează "Nod ", cautare(cheie)
+                pauză
+            caz 2:
+                citește cheie
+                citește noua_cheie
+                dacă update(cheie, noua_cheie):
+                    afișează "Updatat"
+                altfel:
+                    afișează "Cheia nu a fost găsită"
+                pauză
+            caz 3:
+                citește nod
+                suprimare(nod)
+            caz 4:
+                citește nod
+                afișează "Index parinte: ", parinte(nod)
+                pauză
+            caz 5:
+                citește nod
+                afișează "Index prim fiu: ", primul_fiu(nod)
+                pauză
+            caz 6:
+                citește nod
+                afișează "Index frate dreapta: ", frate_dreapta(nod)
+                pauză
+            caz 7:
+                afișare()
+                pauză
