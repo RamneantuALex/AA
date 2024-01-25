@@ -1,0 +1,103 @@
+program PrimMST;
+
+const
+  NUM_NODES = 26;
+
+var
+  graph: array[1..NUM_NODES, 1..NUM_NODES] of Integer;
+
+function eVocala(c: Char): Boolean;
+begin
+  eVocala := (c = 'a') or (c = 'e') or (c = 'i') or (c = 'o') or (c = 'u');
+end;
+
+procedure adauga_arc(var graph: array of array of Integer; src, dest: Char);
+var
+  pondere, index_plecare, index_sosire: Integer;
+begin
+  pondere := Ord(src) + Ord(dest);
+  index_plecare := Ord(src) - Ord('a') + 1;
+  index_sosire := Ord(dest) - Ord('a') + 1;
+
+  graph[index_plecare][index_sosire] := pondere;
+  graph[index_sosire][index_plecare] := pondere;
+end;
+
+function minKey(const key: array of Integer; const mstSet: array of Boolean): Integer;
+var
+  min, min_index, v: Integer;
+begin
+  min := MaxInt;
+  min_index := 0;
+
+  for v := 1 to NUM_NODES do
+  begin
+    if (not mstSet[v]) and (key[v] < min) then
+    begin
+      min := key[v];
+      min_index := v;
+    end;
+  end;
+
+  minKey := min_index;
+end;
+
+procedure primMST(var graph: array of array of Integer);
+var
+  parinte: array[1..NUM_NODES] of Integer;
+  key: array[1..NUM_NODES] of Integer;
+  mstSet: array[1..NUM_NODES] of Boolean;
+  contor, u, v: Integer;
+begin
+  for v := 1 to NUM_NODES do
+  begin
+    key[v] := MaxInt;
+    mstSet[v] := False;
+  end;
+
+  key[1] := 0;
+
+  for contor := 1 to NUM_NODES - 1 do
+  begin
+    u := minKey(key, mstSet);
+    mstSet[u] := True;
+
+    for v := 1 to NUM_NODES do
+    begin
+      if (graph[u][v] > 0) and (not mstSet[v]) and (graph[u][v] < key[v]) then
+      begin
+        parinte[v] := u;
+        key[v] := graph[u][v];
+      end;
+    end;
+  end;
+
+  WriteLn('Acele arborelui de acoperire minima:');
+  for v := 2 to NUM_NODES do
+  begin
+    WriteLn(Chr(Ord('a') + parinte[v]), ' - ', Chr(Ord('a') + v), ' : ', graph[v][parinte[v]]);
+  end;
+
+  WriteLn('Suma arcelor din arborele de acoperire minima: ', key[1]);
+end;
+
+var
+  c1, c2: Char;
+begin
+  FillChar(graph, SizeOf(graph), 0);
+
+  for c1 := 'a' to 'z' do
+  begin
+    for c2 := 'a' to 'z' do
+    begin
+      if (eVocala(c1)) and (not eVocala(c2)) then
+      begin
+        adauga_arc(graph, c1, c2);
+      end;
+    end;
+  end;
+
+  WriteLn('Matricea de adiacenta:');
+  for c1 := 1 to NUM_NODES do
+  begin
+    for c2 := 1 to NUM_NODES do

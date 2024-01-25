@@ -1,0 +1,175 @@
+
+pseudo cod: program AVLTree;
+
+type
+  NodePtr = ^Node;
+  Node = record
+    cheie: Integer;
+    left, right: NodePtr;
+  end;
+
+function newNode(key: Integer): NodePtr;
+var
+  nod: NodePtr;
+begin
+  New(nod);
+  nod^.left := nil;
+  nod^.right := nil;
+  nod^.cheie := key;
+  newNode := nod;
+end;
+
+function insert(root: NodePtr; val: Integer): NodePtr;
+begin
+  if root = nil then
+    insert := newNode(val)
+  else
+  begin
+    if val < root^.cheie then
+      root^.left := insert(root^.left, val)
+    else if val > root^.cheie then
+      root^.right := insert(root^.right, val);
+    insert := root;
+  end;
+end;
+
+procedure inOrder(nod: NodePtr);
+begin
+  if nod <> nil then
+  begin
+    inOrder(nod^.left);
+    Write(nod^.cheie, ' ');
+    inOrder(nod^.right);
+  end;
+end;
+
+function Minim(nod: NodePtr): NodePtr;
+begin
+  if nod^.left <> nil then
+    Minim := Minim(nod^.left)
+  else
+    Minim := nod;
+end;
+
+function Delete(nod: NodePtr; val: Integer): NodePtr;
+var
+  temp: NodePtr;
+begin
+  if nod = nil then
+    Delete := nod
+  else
+  begin
+    if val < nod^.cheie then
+      nod^.left := Delete(nod^.left, val)
+    else if val > nod^.cheie then
+      nod^.right := Delete(nod^.right, val)
+    else
+    begin
+      if (nod^.left = nil) and (nod^.right = nil) then
+      begin
+        Dispose(nod);
+        nod := nil;
+      end
+      else if nod^.left = nil then
+      begin
+        temp := nod;
+        nod := nod^.right;
+        Dispose(temp);
+      end
+      else if nod^.right = nil then
+      begin
+        temp := nod;
+        nod := nod^.left;
+        Dispose(temp);
+      end
+      else
+      begin
+        temp := Minim(nod^.right);
+        nod^.cheie := temp^.cheie;
+        nod^.right := Delete(nod^.right, temp^.cheie);
+      end;
+    end;
+    Delete := nod;
+  end;
+end;
+
+function deleteEven(root: NodePtr): NodePtr;
+begin
+  if root <> nil then
+  begin
+    root^.left := deleteEven(root^.left);
+    root^.right := deleteEven(root^.right);
+    if root^.cheie mod 2 = 0 then
+      root := Delete(root, root^.cheie);
+  end;
+  deleteEven := root;
+end;
+
+function Height(nod: NodePtr): Integer;
+var
+  leftHeight, rightHeight: Integer;
+begin
+  if nod = nil then
+    Height := 0
+  else
+  begin
+    leftHeight := Height(nod^.left);
+    rightHeight := Height(nod^.right);
+    if leftHeight > rightHeight then
+      Height := 1 + leftHeight
+    else
+      Height := 1 + rightHeight;
+  end;
+end;
+
+function isAVL(nod: NodePtr): Integer;
+var
+  left, right: Integer;
+begin
+  if nod = nil then
+    isAVL := 0
+  else
+  begin
+    left := Height(nod^.left);
+    right := Height(nod^.right);
+    if (Abs(left - right) <= 1) and (isAVL(nod^.left) <> 0) and (isAVL(nod^.right) <> 0) then
+      isAVL := 1
+    else
+      isAVL := 0;
+  end;
+end;
+
+var
+  root: NodePtr;
+
+procedure main;
+begin
+  root := nil;
+  root := insert(root, 12);
+  insert(root, -7);
+  insert(root, 45);
+  insert(root, 32);
+  insert(root, 2);
+  insert(root, 22);
+  insert(root, 1);
+  insert(root, 2);
+  insert(root, 3);
+  insert(root, 4);
+  insert(root, 9);
+  insert(root, 90);
+  insert(root, 89);
+  insert(root, 225);
+  insert(root, 0);
+
+  if isAVL(root) <> 0 then
+    WriteLn('Arborele este echilibrat AVL')
+  else
+    WriteLn('Arborele nu este echilibrat AVL');
+
+  root := deleteEven(root);
+  inOrder(root);
+end;
+
+begin
+  main;
+end.
