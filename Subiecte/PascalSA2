@@ -75,7 +75,7 @@ begin
   WriteLn('Acele arborelui de acoperire minima:');
   for v := 2 to NUM_NODES do
   begin
-    WriteLn(Chr(Ord('a') + parinte[v]), ' - ', Chr(Ord('a') + v), ' : ', graph[v][parinte[v]]);
+   printf("%c - %c : %d\n", (char)('a' + parinte[i]), (char)('a' + i), graph[i][parinte[i]]);
   end;
 
   WriteLn('Suma arcelor din arborele de acoperire minima: ', key[1]);
